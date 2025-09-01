@@ -1,31 +1,47 @@
 package core;
 
 import io.Input;
-
-import java.util.Objects;
+import io.Output;
 
 public class ReadCommand {
 
-    public static void readCommand(){
-        String fullCommand, operation,
-                elementName, elementContent;
+    @SuppressWarnings("InfiniteLoopStatement")
+    public static void start(){
+        Directory root = new Directory("/");
+        Directory.current = root;
+        Directory home = new Directory("home");
 
-        String[] brokenCommand;
+        root.addDirectoryChild(home);
+        Directory.current = home;
 
         do{
-            fullCommand = Input.read();
-            brokenCommand = fullCommand.split(" ");
+            String fullCommand = Input.read();
+            readCommand(fullCommand);
+        }while(true);
+    }
 
-            operation = brokenCommand[0];
+    public static void readCommand(String fullCommand){
+        String operation;
+        String elementName = "" ;
+        String elementContent = "";
 
-            if(brokenCommand.length >= 2) {
-                elementName = brokenCommand[1];
-            }
+        String[] brokenCommand;
+        brokenCommand = fullCommand.split(" ");
 
-            if(brokenCommand.length >= 3){
-                elementContent = brokenCommand[2];
-            }
+        operation = brokenCommand[0];
 
-        }while(!operation.equals("poweroff"));
+        if(brokenCommand.length >= 2) {
+            elementName = brokenCommand[1];
+        }
+
+        if(brokenCommand.length >= 3){
+            elementContent = brokenCommand[2];
+        }
+
+        try {
+            Operations.execute(operation, elementName, elementContent);
+        } catch (Exception e) {
+            Output.write(e.fillInStackTrace());
+        }
     }
 }
