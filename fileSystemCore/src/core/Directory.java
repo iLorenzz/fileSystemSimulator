@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Directory {
-    private String name;
+    private String directoryName;
     private List<Directory> sonDirectories;
 
     public Directory(String name){
-        this.name = name;
+        this.directoryName = name;
         sonDirectories = new ArrayList<>();
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.directoryName = name;
     }
 
     public String getName(){
-        return this.name;
+        return this.directoryName;
     }
 }
