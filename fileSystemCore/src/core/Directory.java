@@ -5,11 +5,13 @@ import java.util.List;
 
 public class Directory {
     private String directoryName;
-    private List<Directory> sonDirectories;
+    private List<Directory> childDirectories;
+    private List<File> childFiles;
 
     public Directory(String name){
         this.directoryName = name;
-        sonDirectories = new ArrayList<>();
+        childDirectories = new ArrayList<>();
+        childFiles = new ArrayList<>();
     }
 
     public void setName(String name) {
