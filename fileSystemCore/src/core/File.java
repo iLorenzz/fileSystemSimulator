@@ -1,5 +1,7 @@
 package core;
 
+import java.util.Optional;
+
 public class File {
     private String fileName;
     private String content;
@@ -16,6 +18,10 @@ public class File {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getContent() {
+        return content;
     }
 
     public String getFileName() {

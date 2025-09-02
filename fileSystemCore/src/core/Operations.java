@@ -24,6 +24,12 @@ public final class Operations {
             case "ls":
                 ls();
                 break;
+            case "cat":
+                cat(elementName);
+                break;
+            case "rm":
+                rm(elementName);
+                break;
             case "poweroff":
                 System.exit(0);
             default:
@@ -92,6 +98,23 @@ public final class Operations {
         for(File file : Directory.current.getChildFiles()){
             Output.write(file.getFileName() + " ");
         }
+
+        Output.writeNewLine();
+    }
+
+    private static void cat(String elementName) throws Exception{
+        Optional<File> file = Directory.findChildFileByName(elementName);
+
+        if(file.isPresent()){
+            Output.write(file.get().getContent());
+            return;
+        }
+
+        throw new Exception();
+    }
+
+    private static void rm(String elementName){
+
     }
 
 }
