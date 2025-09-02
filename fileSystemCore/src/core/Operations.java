@@ -113,8 +113,24 @@ public final class Operations {
         throw new Exception();
     }
 
-    private static void rm(String elementName){
+    private static void rm(String elementName) throws Exception{
+        Optional<File> file = Directory.findChildFileByName(elementName);
 
+        if(file.isPresent()){
+            Directory.current.removeFileChild(file.get());
+            return;
+        }
+
+        Optional<Directory> dir = Directory.findChildDirByName(elementName);
+        if(dir.isPresent()){
+            if(!dir.get().getChildDirectories().isEmpty() || !dir.get().getChildFiles().isEmpty()){
+                throw new Exception();
+            }
+            Directory.current.removeDirectoryChild(dir.get());
+            return;
+        }
+
+        throw new Exception();
     }
 
 }

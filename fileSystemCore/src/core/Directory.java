@@ -34,8 +34,16 @@ public class Directory {
         childDirectories.add(child);
     }
 
+    public void removeDirectoryChild(Directory child){
+        childDirectories.remove(child);
+    }
+
     public void addFileChild(File child){
         childFiles.add(child);
+    }
+
+    public void removeFileChild(File child){
+        childFiles.remove(child);
     }
 
 
