@@ -1,13 +1,13 @@
 package core;
 
-import java.util.Optional;
+import core.directories.SubDirectory;
 
 public class File {
     private String fileName;
     private String content;
-    private final Directory father;
+    private final SubDirectory father;
 
-    public File(String fileName, Directory father){
+    public File(String fileName, SubDirectory father){
         this.fileName = fileName;
         this.father = father;
     }

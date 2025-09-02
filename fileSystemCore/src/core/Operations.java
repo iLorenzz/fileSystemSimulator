@@ -1,5 +1,8 @@
 package core;
 
+import core.directories.Directory;
+import core.directories.Root;
+import core.directories.SubDirectory;
 import io.Output;
 
 import java.util.Optional;
@@ -7,13 +10,13 @@ import java.util.Optional;
 public final class Operations {
     private Operations() {}
 
-    public static void execute(String operation, String elementName, String elementContent) throws Exception{
+    public static void execute(String operation, String elementName, String elementContent, Root root) throws Exception{
         switch(operation){
             case "mkdir":
                 mkdir(elementName);
                 break;
             case "cd":
-                cd(elementName);
+                cd(elementName, root);
                 break;
             case "touch":
                 touch(elementName);
@@ -39,23 +42,28 @@ public final class Operations {
 
     private static void mkdir(String elementName){
         //TODO: verify if already exists a directory with this name
-        Directory newDirectory = new Directory(elementName);
-        Directory.current.addDirectoryChild(newDirectory);
-        Output.write(newDirectory, true);
+        SubDirectory newSubDirectory = new SubDirectory(elementName);
+        SubDirectory.currentSubDirectory().addDirectoryChild(newSubDirectory);
+        Output.write(newSubDirectory, true);
     }
 
-    private static void cd(String dirName) throws  Exception{
+    private static void cd(String dirName, Root root) throws  Exception{
         //TODO: verify if already exists a directory with this name
         if(dirName.equals("..")){
-            Directory.current = Directory.current.getFather();
-            Output.write(Directory.current, true);
+            if(SubDirectory.currentSubDirectory().getFather().getClass().isAssignableFrom(Root.class)){
+                Directory.setCurrentDirectory(root);
+                return;
+            }
+
+            SubDirectory.setCurrentDirectory(SubDirectory.currentSubDirectory().getFather());
+            Output.write(SubDirectory.currentSubDirectory(), true);
             return;
         }
 
-        Optional<Directory> nextDirectory = Directory.findChildDirByName(dirName);
+        Optional<SubDirectory> nextDirectory = SubDirectory.findChildDirByName(dirName);
 
         if(nextDirectory.isPresent()){
-            Directory.current = nextDirectory.get();
+            SubDirectory.setCurrentDirectory(nextDirectory.get());
             //Output.write(Directory.current, true);
             return;
         }
@@ -65,12 +73,12 @@ public final class Operations {
 
     private static void touch(String elementName) throws Exception{
         //TODO: verify if already exists a file with this name
-        Directory.current.addFileChild(new File(elementName, Directory.current));
+        SubDirectory.currentSubDirectory().addFileChild(new File(elementName, SubDirectory.currentSubDirectory()));
     }
 
     private static void writeFile(String elementName, String content) throws Exception{
         //TODO: verify if already exists a file with this name
-        Optional<File> file = Directory.findChildFileByName(elementName);
+        Optional<File> file = SubDirectory.findChildFileByName(elementName);
         String formatedContent = "";
 
         if(content == null || !content.startsWith("\"") || !content.endsWith("\"")){
@@ -91,11 +99,11 @@ public final class Operations {
     }
 
     private static void ls(){
-        for(Directory dir : Directory.current.getChildDirectories()){
+        for(SubDirectory dir : SubDirectory.currentSubDirectory().getChildDirectories()){
             Output.write(dir.getName() + " ");
         }
 
-        for(File file : Directory.current.getChildFiles()){
+        for(File file : SubDirectory.currentSubDirectory().getChildFiles()){
             Output.write(file.getFileName() + " ");
         }
 
@@ -103,7 +111,7 @@ public final class Operations {
     }
 
     private static void cat(String elementName) throws Exception{
-        Optional<File> file = Directory.findChildFileByName(elementName);
+        Optional<File> file = SubDirectory.findChildFileByName(elementName);
 
         if(file.isPresent()){
             Output.write(file.get().getContent());
@@ -114,19 +122,19 @@ public final class Operations {
     }
 
     private static void rm(String elementName) throws Exception{
-        Optional<File> file = Directory.findChildFileByName(elementName);
+        Optional<File> file = SubDirectory.findChildFileByName(elementName);
 
         if(file.isPresent()){
-            Directory.current.removeFileChild(file.get());
+            SubDirectory.currentSubDirectory().removeFileChild(file.get());
             return;
         }
 
-        Optional<Directory> dir = Directory.findChildDirByName(elementName);
+        Optional<SubDirectory> dir = SubDirectory.findChildDirByName(elementName);
         if(dir.isPresent()){
             if(!dir.get().getChildDirectories().isEmpty() || !dir.get().getChildFiles().isEmpty()){
                 throw new Exception();
             }
-            Directory.current.removeDirectoryChild(dir.get());
+            SubDirectory.currentSubDirectory().removeDirectoryChild(dir.get());
             return;
         }
 
