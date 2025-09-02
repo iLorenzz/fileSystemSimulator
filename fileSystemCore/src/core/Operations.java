@@ -21,6 +21,9 @@ public final class Operations {
             case "write":
                 writeFile(elementName, elementContent);
                 break;
+            case "ls":
+                ls();
+                break;
             case "poweroff":
                 System.exit(0);
             default:
@@ -54,12 +57,12 @@ public final class Operations {
         throw new Exception();
     }
 
-    public static void touch(String elementName) throws Exception{
+    private static void touch(String elementName) throws Exception{
         //TODO: verify if already exists a file with this name
         Directory.current.addFileChild(new File(elementName, Directory.current));
     }
 
-    public static void writeFile(String elementName, String content) throws Exception{
+    private static void writeFile(String elementName, String content) throws Exception{
         //TODO: verify if already exists a file with this name
         Optional<File> file = Directory.findChildFileByName(elementName);
         String formatedContent = "";
@@ -79,6 +82,16 @@ public final class Operations {
         }
 
         throw new Exception();
+    }
+
+    private static void ls(){
+        for(Directory dir : Directory.current.getChildDirectories()){
+            Output.write(dir.getName() + " ");
+        }
+
+        for(File file : Directory.current.getChildFiles()){
+            Output.write(file.getFileName() + " ");
+        }
     }
 
 }
