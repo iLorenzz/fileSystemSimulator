@@ -34,6 +34,11 @@ public class Directory {
         childDirectories.add(child);
     }
 
+    public void addFileChild(File child){
+        childFiles.add(child);
+    }
+
+
     public List<Directory> getChildDirectories() {
         return childDirectories;
     }
@@ -48,6 +53,18 @@ public class Directory {
         for(Directory dir : current.getChildDirectories()){
             if(dir.getName().equals(dirName)){
                 foundChild = Optional.of(dir);
+            }
+        }
+
+        return foundChild;
+    }
+
+    public static Optional<File> findChildFileByName(String fileName){
+        Optional<File> foundChild = Optional.empty();
+
+        for(File file : current.getChildFiles()){
+            if(file.getFileName().equals(fileName)){
+                foundChild = Optional.of(file);
             }
         }
 

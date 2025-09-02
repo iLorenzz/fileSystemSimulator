@@ -35,7 +35,13 @@ public class ReadCommand {
         }
 
         if(brokenCommand.length >= 3){
-            elementContent = brokenCommand[2];
+            for(int i = 2; i < brokenCommand.length; i++){
+                if(i != brokenCommand.length - 1)
+                    elementContent = elementContent.concat(brokenCommand[i] + " ");
+
+                if(i == brokenCommand.length - 1)
+                    elementContent = elementContent.concat(brokenCommand[i]);
+            }
         }
 
         try {
