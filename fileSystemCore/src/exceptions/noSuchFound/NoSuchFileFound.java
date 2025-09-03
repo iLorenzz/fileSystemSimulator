@@ -1,4 +1,4 @@
-package exceptions;
+package exceptions.noSuchFound;
 
 public class NoSuchFileFound extends RuntimeException {
     public NoSuchFileFound(String message) {

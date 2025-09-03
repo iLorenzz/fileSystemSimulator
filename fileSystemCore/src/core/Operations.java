@@ -3,8 +3,10 @@ package core;
 import core.directories.Directory;
 import core.directories.Root;
 import core.directories.SubDirectory;
-import exceptions.NoSuchDirectoryFound;
-import exceptions.NoSuchFileFound;
+import exceptions.alreadyExists.DirectoryAlreadyExistsException;
+import exceptions.alreadyExists.FileAlreadyExistsException;
+import exceptions.noSuchFound.NoSuchDirectoryFound;
+import exceptions.noSuchFound.NoSuchFileFound;
 import io.Output;
 
 import java.util.ArrayList;
@@ -48,11 +50,11 @@ public final class Operations {
         }
     }
 
-    private static void mkdir(String elementName) throws Exception{
+    private static void mkdir(String elementName) throws DirectoryAlreadyExistsException{
         SubDirectory current = Objects.requireNonNull(SubDirectory.currentSubDirectory());
 
         if(current.childDirectoryAlreadyExists(elementName)){
-            throw new Exception();
+            throw new DirectoryAlreadyExistsException(String.format("mkdir: directory already exists: %s", elementName));
         }
 
         SubDirectory newSubDirectory = new SubDirectory(elementName);
@@ -89,11 +91,11 @@ public final class Operations {
         throw new NoSuchDirectoryFound(String.format("cd: no such directory exists: %s", dirName));
     }
 
-    private static void touch(String elementName) throws Exception{
+    private static void touch(String elementName) throws FileAlreadyExistsException{
         SubDirectory current = Objects.requireNonNull(SubDirectory.currentSubDirectory());
 
         if(current.childFileAlreadyExists(elementName)){
-            throw new Exception();
+            throw new FileAlreadyExistsException(String.format("touch: no such directory exists: %s", elementName));
         }
 
         current.addFileChild(new File(elementName, SubDirectory.currentSubDirectory()));
@@ -154,7 +156,7 @@ public final class Operations {
         Optional<SubDirectory> dir = SubDirectory.findChildDirByName(elementName);
         if(dir.isPresent()){
             if(!dir.get().getChildDirectories().isEmpty() || !dir.get().getChildFiles().isEmpty()){
-                throw new Exception();
+                throw new NoSuchDirectoryFound(String.format("rm: no such directory exists: %s", elementName));
             }
             Objects.requireNonNull(SubDirectory.currentSubDirectory()).removeDirectoryChild(dir.get());
             return;
