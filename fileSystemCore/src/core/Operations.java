@@ -5,6 +5,8 @@ import core.directories.Root;
 import core.directories.SubDirectory;
 import exceptions.alreadyExists.DirectoryAlreadyExistsException;
 import exceptions.alreadyExists.FileAlreadyExistsException;
+import exceptions.commandTextError.InvalidContentFormatException;
+import exceptions.commandTextError.NoSuchCommandFoundException;
 import exceptions.noSuchFound.NoSuchDirectoryFound;
 import exceptions.noSuchFound.NoSuchFileFound;
 import io.Output;
@@ -46,7 +48,7 @@ public final class Operations {
             case "poweroff":
                 System.exit(0);
             default:
-                throw new Exception();
+                throw new NoSuchCommandFoundException(String.format("%s: command not found", operation));
         }
     }
 
@@ -101,12 +103,12 @@ public final class Operations {
         current.addFileChild(new File(elementName, SubDirectory.currentSubDirectory()));
     }
 
-    private static void writeFile(String elementName, String content) throws Exception{
+    private static void writeFile(String elementName, String content) throws NoSuchFileFound, InvalidContentFormatException {
         Optional<File> file = SubDirectory.findChildFileByName(elementName);
         String formatedContent = "";
 
         if(content == null || !content.startsWith("\"") || !content.endsWith("\"")){
-            throw  new Exception();
+            throw  new InvalidContentFormatException("write: invalid content format");
         }
 
         if(content.length() >= 2){
@@ -134,7 +136,7 @@ public final class Operations {
         Output.writeNewLine();
     }
 
-    private static void cat(String elementName) throws Exception{
+    private static void cat(String elementName) throws NoSuchFileFound{
         Optional<File> file = SubDirectory.findChildFileByName(elementName);
 
         if(file.isPresent()){
@@ -142,7 +144,7 @@ public final class Operations {
             return;
         }
 
-        throw new Exception();
+        throw new NoSuchFileFound(String.format("write: no such file exists: %s", elementName));
     }
 
     private static void rm(String elementName) throws Exception{
@@ -156,13 +158,13 @@ public final class Operations {
         Optional<SubDirectory> dir = SubDirectory.findChildDirByName(elementName);
         if(dir.isPresent()){
             if(!dir.get().getChildDirectories().isEmpty() || !dir.get().getChildFiles().isEmpty()){
-                throw new NoSuchDirectoryFound(String.format("rm: no such directory exists: %s", elementName));
+                throw new DirectoryAlreadyExistsException(String.format("rm: %s is not empty. Remove all directories and files in this directory them remove it", elementName));
             }
             Objects.requireNonNull(SubDirectory.currentSubDirectory()).removeDirectoryChild(dir.get());
             return;
         }
 
-        throw new Exception();
+        throw new NoSuchDirectoryFound(String.format("rm: no such directory exists: %s", elementName));
     }
 
     public static void pwd(){
