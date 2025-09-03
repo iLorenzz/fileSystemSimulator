@@ -4,6 +4,7 @@ import core.directories.Directory;
 import core.directories.Root;
 import core.directories.SubDirectory;
 import exceptions.NoSuchDirectoryFound;
+import exceptions.NoSuchFileFound;
 import io.Output;
 
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public final class Operations {
             return;
         }
 
-        throw new NoSuchDirectoryFound();
+        throw new NoSuchDirectoryFound(String.format("cd: no such directory exists: %s", dirName));
     }
 
     private static void touch(String elementName) throws Exception{
@@ -116,7 +117,7 @@ public final class Operations {
             return;
         }
 
-        throw new Exception();
+        throw new NoSuchFileFound(String.format("write: no such file exists: %s", elementName));
     }
 
     private static void ls(){
