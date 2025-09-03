@@ -3,6 +3,7 @@ package core;
 import core.directories.Directory;
 import core.directories.Root;
 import core.directories.SubDirectory;
+import exceptions.NoSuchDirectoryFound;
 import io.Output;
 
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public final class Operations {
         //Output.write(newSubDirectory, true);
     }
 
-    private static void cd(String dirName, Root root) throws  Exception{
+    private static void cd(String dirName, Root root) throws  NoSuchDirectoryFound{
         SubDirectory current = SubDirectory.currentSubDirectory();
 
         if(current == null){
@@ -84,7 +85,7 @@ public final class Operations {
             return;
         }
 
-        throw new Exception();
+        throw new NoSuchDirectoryFound();
     }
 
     private static void touch(String elementName) throws Exception{

@@ -58,7 +58,7 @@ public class ReadCommand {
         try {
             Operations.execute(operation, elementName, elementContent, root);
         } catch (Exception e) {
-            Output.write(e.fillInStackTrace());
+            Output.write(e.getMessage(), true);
         }
     }
 
