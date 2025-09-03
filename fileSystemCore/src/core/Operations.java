@@ -46,15 +46,19 @@ public final class Operations {
         }
     }
 
-    private static void mkdir(String elementName){
-        //TODO: verify if already exists a directory with this name
+    private static void mkdir(String elementName) throws Exception{
+        SubDirectory current = Objects.requireNonNull(SubDirectory.currentSubDirectory());
+
+        if(current.childDirectoryAlreadyExists(elementName)){
+            throw new Exception();
+        }
+
         SubDirectory newSubDirectory = new SubDirectory(elementName);
-        Objects.requireNonNull(SubDirectory.currentSubDirectory()).addDirectoryChild(newSubDirectory);
+        current.addDirectoryChild(newSubDirectory);
         Output.write(newSubDirectory, true);
     }
 
     private static void cd(String dirName, Root root) throws  Exception{
-        //TODO: verify if already exists a directory with this name
         if(dirName.equals("..")){
             if(Objects.requireNonNull(SubDirectory.currentSubDirectory())
                     .getFather().getClass().isAssignableFrom(Root.class)
@@ -80,13 +84,16 @@ public final class Operations {
     }
 
     private static void touch(String elementName) throws Exception{
-        //TODO: verify if already exists a file with this name
-        Objects.requireNonNull(SubDirectory.currentSubDirectory())
-                .addFileChild(new File(elementName, SubDirectory.currentSubDirectory()));
+        SubDirectory current = Objects.requireNonNull(SubDirectory.currentSubDirectory());
+
+        if(current.childFileAlreadyExists(elementName)){
+            throw new Exception();
+        }
+
+        current.addFileChild(new File(elementName, SubDirectory.currentSubDirectory()));
     }
 
     private static void writeFile(String elementName, String content) throws Exception{
-        //TODO: verify if already exists a file with this name
         Optional<File> file = SubDirectory.findChildFileByName(elementName);
         String formatedContent = "";
 
