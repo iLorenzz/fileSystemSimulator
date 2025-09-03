@@ -5,6 +5,9 @@ import core.directories.Root;
 import core.directories.SubDirectory;
 import io.Output;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class Operations {
@@ -33,6 +36,9 @@ public final class Operations {
             case "rm":
                 rm(elementName);
                 break;
+            case "pwd":
+                pwd();
+                break;
             case "poweroff":
                 System.exit(0);
             default:
@@ -43,19 +49,21 @@ public final class Operations {
     private static void mkdir(String elementName){
         //TODO: verify if already exists a directory with this name
         SubDirectory newSubDirectory = new SubDirectory(elementName);
-        SubDirectory.currentSubDirectory().addDirectoryChild(newSubDirectory);
+        Objects.requireNonNull(SubDirectory.currentSubDirectory()).addDirectoryChild(newSubDirectory);
         Output.write(newSubDirectory, true);
     }
 
     private static void cd(String dirName, Root root) throws  Exception{
         //TODO: verify if already exists a directory with this name
         if(dirName.equals("..")){
-            if(SubDirectory.currentSubDirectory().getFather().getClass().isAssignableFrom(Root.class)){
+            if(Objects.requireNonNull(SubDirectory.currentSubDirectory())
+                    .getFather().getClass().isAssignableFrom(Root.class)
+            ){
                 Directory.setCurrentDirectory(root);
                 return;
             }
 
-            SubDirectory.setCurrentDirectory(SubDirectory.currentSubDirectory().getFather());
+            SubDirectory.setCurrentDirectory(Objects.requireNonNull(SubDirectory.currentSubDirectory()).getFather());
             Output.write(SubDirectory.currentSubDirectory(), true);
             return;
         }
@@ -73,7 +81,8 @@ public final class Operations {
 
     private static void touch(String elementName) throws Exception{
         //TODO: verify if already exists a file with this name
-        SubDirectory.currentSubDirectory().addFileChild(new File(elementName, SubDirectory.currentSubDirectory()));
+        Objects.requireNonNull(SubDirectory.currentSubDirectory())
+                .addFileChild(new File(elementName, SubDirectory.currentSubDirectory()));
     }
 
     private static void writeFile(String elementName, String content) throws Exception{
@@ -99,11 +108,11 @@ public final class Operations {
     }
 
     private static void ls(){
-        for(SubDirectory dir : SubDirectory.currentSubDirectory().getChildDirectories()){
+        for(SubDirectory dir : Objects.requireNonNull(SubDirectory.currentSubDirectory()).getChildDirectories()){
             Output.write(dir.getName() + " ");
         }
 
-        for(File file : SubDirectory.currentSubDirectory().getChildFiles()){
+        for(File file : Objects.requireNonNull(SubDirectory.currentSubDirectory()).getChildFiles()){
             Output.write(file.getFileName() + " ");
         }
 
@@ -114,7 +123,7 @@ public final class Operations {
         Optional<File> file = SubDirectory.findChildFileByName(elementName);
 
         if(file.isPresent()){
-            Output.write(file.get().getContent());
+            Output.write(file.get().getContent(), true);
             return;
         }
 
@@ -125,7 +134,7 @@ public final class Operations {
         Optional<File> file = SubDirectory.findChildFileByName(elementName);
 
         if(file.isPresent()){
-            SubDirectory.currentSubDirectory().removeFileChild(file.get());
+            Objects.requireNonNull(SubDirectory.currentSubDirectory()).removeFileChild(file.get());
             return;
         }
 
@@ -134,11 +143,37 @@ public final class Operations {
             if(!dir.get().getChildDirectories().isEmpty() || !dir.get().getChildFiles().isEmpty()){
                 throw new Exception();
             }
-            SubDirectory.currentSubDirectory().removeDirectoryChild(dir.get());
+            Objects.requireNonNull(SubDirectory.currentSubDirectory()).removeDirectoryChild(dir.get());
             return;
         }
 
         throw new Exception();
+    }
+
+    public static void pwd(){
+        SubDirectory current = SubDirectory.currentSubDirectory();
+        List<String> allDirectoriesNamePath = new ArrayList<>();
+
+        if(current == null){
+            Output.write("/", true);
+            return;
+        }
+
+        while(true){
+            allDirectoriesNamePath.add(current.getName());
+
+            if(current.getFather().getClass().isAssignableFrom(Root.class)){
+                break;
+            }
+
+            current = (SubDirectory) current.getFather();
+        }
+
+        String path = allDirectoriesNamePath
+                .stream()
+                .reduce("", (dir, accum) -> "/"+accum+dir);
+
+        Output.write(path, true);
     }
 
 }

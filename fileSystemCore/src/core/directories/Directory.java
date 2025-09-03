@@ -8,7 +8,7 @@ public abstract class Directory {
     protected String directoryName;
     protected List<SubDirectory> childDirectories;
     protected List<File> childFiles;
-    public static Directory current = null;
+    protected static Directory current = null;
 
     public Directory(String directoryName, List<SubDirectory> childDirectories, List<File> childFiles) {
         this.directoryName = directoryName;

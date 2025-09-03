@@ -18,6 +18,9 @@ public class SubDirectory extends Directory { ;
     }
 
     public static SubDirectory currentSubDirectory(){
+        if(current.getClass().isAssignableFrom(Root.class)){
+            return null;
+        }
         return (SubDirectory) current;
     }
 
