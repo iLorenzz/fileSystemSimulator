@@ -6,15 +6,28 @@ import core.directories.SubDirectory;
 import io.Input;
 import io.Output;
 
+import java.util.Objects;
+
 public class ReadCommand {
 
     @SuppressWarnings("InfiniteLoopStatement")
     public static void start(){
         Root root = setupDefaultDirectories();
 
+        Output.write("/"+Objects.requireNonNull(SubDirectory.currentSubDirectory()).getName() + ":" + " ");
+        SubDirectory current = SubDirectory.currentSubDirectory();
+
         do{
             String fullCommand = Input.read();
             readCommand(fullCommand, root);
+
+            current = SubDirectory.currentSubDirectory();
+            if(current == null){
+                Output.write("/: ");
+                continue;
+            }
+
+            Output.write("/"+current.getName() + ":" + " ");
         }while(true);
     }
 
@@ -61,4 +74,8 @@ public class ReadCommand {
 
         return root;
     }
+
+    /*public static String newUser(){
+        String
+    }*/
 }

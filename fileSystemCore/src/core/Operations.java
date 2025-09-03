@@ -55,20 +55,24 @@ public final class Operations {
 
         SubDirectory newSubDirectory = new SubDirectory(elementName);
         current.addDirectoryChild(newSubDirectory);
-        Output.write(newSubDirectory, true);
+        //Output.write(newSubDirectory, true);
     }
 
     private static void cd(String dirName, Root root) throws  Exception{
+        SubDirectory current = SubDirectory.currentSubDirectory();
+
+        if(current == null){
+            return;
+        }
+
         if(dirName.equals("..")){
-            if(Objects.requireNonNull(SubDirectory.currentSubDirectory())
-                    .getFather().getClass().isAssignableFrom(Root.class)
-            ){
+            if(current.getFather().getClass().isAssignableFrom(Root.class)){
                 Directory.setCurrentDirectory(root);
                 return;
             }
 
             SubDirectory.setCurrentDirectory(Objects.requireNonNull(SubDirectory.currentSubDirectory()).getFather());
-            Output.write(SubDirectory.currentSubDirectory(), true);
+            //Output.write(SubDirectory.currentSubDirectory(), true);
             return;
         }
 
@@ -107,7 +111,7 @@ public final class Operations {
 
         if(file.isPresent()){
             file.get().setContent(formatedContent);
-            Output.write(file.get(), true);
+            //Output.write(file.get(), true);
             return;
         }
 
