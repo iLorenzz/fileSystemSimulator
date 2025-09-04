@@ -70,7 +70,7 @@ public class ReadCommand {
         root.addDirectoryChild(home);
         SubDirectory.setCurrentDirectory(home);
 
-        Output.write(home.getFather(), true);
+        //Output.write(home.getFather(), true);
 
         return root;
     }
