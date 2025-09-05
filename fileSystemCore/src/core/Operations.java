@@ -126,7 +126,7 @@ public final class Operations {
 
     private static void ls(){
         for(SubDirectory dir : Objects.requireNonNull(SubDirectory.currentSubDirectory()).getChildDirectories()){
-            Output.write(dir.getName() + " ");
+            Output.write("\u001B[32m + dir.getName() + \u001B[0m + " ");
         }
 
         for(File file : Objects.requireNonNull(SubDirectory.currentSubDirectory()).getChildFiles()){
